@@ -7,10 +7,11 @@ function CreateObservableApp(initialState = {}) {
 	const addReducer = reducer => {
 		app.reducers = [...app.reducers, reducer];
 	}
+	app.addReducer = addReducer;
 	const reduce = (action) => {
 		const newStore = {};
 		app.reducers.map(reducer => {
-			newStore[reducer.name] = reducer.reduce(action);
+			newStore[reducer.name] = reducer.reduce(app.store[reducer.name], action);
 		});
 		return newStore;
 	}
@@ -25,6 +26,7 @@ function CreateObservableApp(initialState = {}) {
 	const addObserver = observer => {
 		app.observers = [...app.observers, observer];
 	}
+	app.addObserver = addObserver;
 	return app;
 }
 
@@ -51,11 +53,38 @@ function CreateObserver() {
 	return obj;
 }
 
+function CreateToDoReducer() {
+	const reducer = {};
+	reducer.name = "ToDoReducer";
+	const reduce = (state, action) => {
+		switch (action.type) {
+			case "ADD_ITEM":
+				const items = state.items;
+				return Object.assign({}, state, [...items, action.payload]);
+			default:
+				return state;
+		}
+	}
+	reducer.reduce = reduce;
+	return reducer;
+}
+
+
+const initialState = {
+	ToDoReducer: {
+		items: [],
+	},
+};
+
+function addItem(app, item) {
+	app.dispatch({type: "ADD_ITEM", payload: item});
+}
 
 function main() {
-	const app = CreateObservableApp({});
+	const app = CreateObservableApp(initialStates);
 	const observer = CreateObserver();
-
+	app.addObserver(observer);
+	app.addReducer(CreateToDoReducer());
 
 	const input = $("#input")[0];
 	$("form.addForm").submit(e => onSubmit(e, input));
