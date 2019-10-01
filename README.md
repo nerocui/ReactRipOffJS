@@ -1,5 +1,5 @@
 # ReactRipOffJS
-A React like library for plain HTML/Javascript frontend project.
+A React/Redux like library for plain HTML/Javascript frontend project.
 App and Render method is based on Observable/Observer pattern. Data is based on action/reducer pattern. The whole app shares a single store of truth.
 
 ![Create Initial State](https://github.com/nerocui/screenshots/blob/master/ReactRIpOffJS/initialstore.png?raw=true)

@@ -78,6 +78,23 @@ function addItem(app, item) {
 	app.dispatch({type: "ADD_ITEM", payload: item});
 }
 
+function getRenderMethod() {
+	let methods = [];
+	for (let i = 0; i < 15; i++) {
+		const render = ({list}) => {
+			$(`#list${i}`).html("");
+			list.map(item => {
+				const li = document.createElement('li');
+				$(li).addClass('item');
+				$(li).html(item);
+				$(`#list${i}`).append(li);
+			});
+		};
+		methods.push(render);
+	}
+	return methods;
+}
+
 const renderList = ({list}) => {
 	$("#list").html("");
 	list.map(item => {
@@ -121,7 +138,10 @@ function main() {
 
 	const input = $("#input")[0];
 	$("form.addForm").submit(e => onSubmit(e, input));
-	observer.addHandler((state) => connect(mapStateToProps, state)(renderList));
+	const renderers = getRenderMethod();
+	renderers.map(renderer => {
+		observer.addHandler((state) => connect(mapStateToProps, state)(renderer));
+	});
 	addItem(app, 'haha');
 	addItem(app, 'hehe');
 }

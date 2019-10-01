@@ -1,0 +1,15 @@
+.list-container {
+	border: 1px solid rgb(230, 230, 230);
+	box-sizing: border-box;
+	padding: 20px 0;
+}
+
+.list-container div {
+	background-color: rgb(255, 204, 65);
+	border-top: 5px solid rgb(56, 56, 56);
+	border-radius: 5px;
+	margin: 5px;
+	-webkit-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+}
