@@ -9,15 +9,13 @@ function CreateObservableApp(initialState = {}) {
 	}
 	app.addReducer = addReducer;
 	const reduce = (action) => {
-		const newStore = {};
 		app.reducers.map(reducer => {
-			newStore[reducer.name] = reducer.reduce(app.store[reducer.name], action);
+			app.store[reducer.name] = reducer.reduce(app.store[reducer.name], action);
 		});
-		return newStore;
 	}
 
 	const dispatch = action => {
-		app.store = reduce(action);
+		reduce(action);
 		app.observers.map(observer => {
 			observer.receive(app.store);
 		});
@@ -60,7 +58,7 @@ function CreateToDoReducer() {
 		switch (action.type) {
 			case "ADD_ITEM":
 				const items = state.items;
-				return Object.assign({}, state, [...items, action.payload]);
+				return Object.assign({}, state, {items: [...items, action.payload]});
 			default:
 				return state;
 		}
@@ -80,18 +78,40 @@ function addItem(app, item) {
 	app.dispatch({type: "ADD_ITEM", payload: item});
 }
 
+const renderList = ({list}) => {
+	$("#list").html("");
+	list.map(item => {
+		const li = document.createElement('li');
+		$(li).addClass('item');
+		$(li).html(item);
+		$("#list").append(li);
+	});
+}
+
+function connect(mapStateToProps, state) {
+	return render => {
+		const props = mapStateToProps(state);
+		return render(props);
+	}
+}
+
+function mapStateToProps(state) {
+	return {
+		list: state.ToDoReducer.items,
+	};
+}
+
 function main() {
-	const app = CreateObservableApp(initialStates);
+	const app = CreateObservableApp(initialState);
 	const observer = CreateObserver();
 	app.addObserver(observer);
 	app.addReducer(CreateToDoReducer());
 
 	const input = $("#input")[0];
 	$("form.addForm").submit(e => onSubmit(e, input));
-	observer.setHandler(list => renderList(list));
-	todos.addObserver(observer);
-	todos.addItem('heheheh');
-	todos.addItem("djoaushf");
+	observer.addHandler((state) => connect(mapStateToProps, state)(renderList));
+	addItem(app, 'haha');
+	addItem(app, 'hehe');
 }
 
 $(document).ready(main);
