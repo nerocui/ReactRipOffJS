@@ -101,11 +101,23 @@ function mapStateToProps(state) {
 	};
 }
 
+
+
 function main() {
 	const app = CreateObservableApp(initialState);
 	const observer = CreateObserver();
 	app.addObserver(observer);
 	app.addReducer(CreateToDoReducer());
+
+	const onSubmit = (e, input) => {
+		e.preventDefault();
+		const text = input.value;
+		if (!text || text === '') {
+			return;
+		}
+		addItem(app, text);
+		$(input).val('');
+	}
 
 	const input = $("#input")[0];
 	$("form.addForm").submit(e => onSubmit(e, input));
